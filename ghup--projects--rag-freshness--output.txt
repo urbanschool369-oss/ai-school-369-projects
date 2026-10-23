@@ -1,0 +1,110 @@
+Working on a scratch copy of docs/ at /tmp/rag-freshness-poc61neb
+
+STEP 1: Build the index
+  INDEXED returns-policy.txt: embedded 6 chunks (version 1)
+  INDEXED shipping-guide.txt: embedded 5 chunks (version 1)
+  INDEXED warranty.txt: embedded 5 chunks (version 1)
+  Index now holds 16 chunks.
+
+STEP 2: Canary check on the fresh index (expect all PASS)
+  [PASS] Q 1: How many days do I have to return an item?
+        answer: Customers can return any item within 30 days of delivery for a full refund.
+  [PASS] Q 2: Can I get a full refund for a return?
+        answer: Customers can return any item within 30 days of delivery for a full refund.
+  [PASS] Q 3: Do I need the original packaging to return an item?
+        answer: Items must be returned in their original packaging with the receipt included.
+  [PASS] Q 4: How will my refund be paid?
+        answer: Refunds are paid back to the original payment method within 5 business days after we receive the item.
+  [PASS] Q 5: Can final sale items be returned?
+        answer: Items marked final sale cannot be returned or exchanged.
+  [PASS] Q 6: Is return shipping free for members?
+        answer: Return shipping is free for members, and guests pay a flat 6 dollar fee.
+  [PASS] Q 7: How long does standard shipping take?
+        answer: Standard shipping takes 3 to 5 business days within the country.
+  [PASS] Q 8: How fast is express shipping?
+        answer: Express shipping takes 1 to 2 business days and costs 12 dollars.
+  [PASS] Q 9: Will my order ship today if I order before 2 pm?
+        answer: Orders placed before 2 pm ship the same day.
+  [PASS] Q10: Do you ship to Canada?
+        answer: We ship to Canada and Mexico, and delivery there takes 7 to 10 business days.
+  [PASS] Q11: How do I track my order?
+        answer: Every order includes tracking by email once the package leaves the warehouse.
+  [PASS] Q12: How long is the warranty on a product?
+        answer: Every product includes a 2 year warranty that covers defects in materials and workmanship.
+  [PASS] Q13: Does the warranty cover defects in materials?
+        answer: Every product includes a 2 year warranty that covers defects in materials and workmanship.
+  [PASS] Q14: Does the warranty cover water damage?
+        answer: The warranty does not cover damage from drops, water, or misuse.
+  [PASS] Q15: How do I make a warranty claim?
+        answer: To make a warranty claim, contact support with your order number and a photo of the defect.
+  [PASS] Q16: How long do approved warranty claims take?
+        answer: Approved warranty claims are repaired or replaced within 10 business days.
+  [PASS] Q17: Are batteries covered under warranty?
+        answer: Batteries are covered for the first 12 months of the warranty period.
+  [PASS] Q18: Do I need a photo to make a warranty claim?
+        answer: To make a warranty claim, contact support with your order number and a photo of the defect.
+  [PASS] Q19: Will my product be repaired or replaced under warranty?
+        answer: Approved warranty claims are repaired or replaced within 10 business days.
+  [PASS] Q20: Does the warranty cover misuse?
+        answer: The warranty does not cover damage from drops, water, or misuse.
+  Canary result: 20/20 passed.
+
+STEP 3: The world changes (but nobody refreshes yet)
+  returns-policy.txt edited: 30 days became 60 days.
+  shipping-guide.txt deleted.
+  Asking the OLD index anyway: Customers can return any item within 30 days of delivery for a full refund.
+  That answer is stale. The photograph does not know.
+
+STEP 4: Refresh (only the diff is applied)
+  DELETED shipping-guide.txt: removed 5 chunks
+  CHANGED returns-policy.txt: embedded 6 chunks (version 2)
+  SAME    warranty.txt: unchanged, skipped
+  Index now holds 11 chunks.
+  Same question, refreshed index: Customers can return any item within 60 days of delivery for a full refund.
+  Shipping question now: (no answer)
+  The deleted document stopped answering, as it should.
+
+STEP 5: Canary check after the change (expect all PASS)
+  [PASS] Q 1: How many days do I have to return an item?
+        answer: Customers can return any item within 60 days of delivery for a full refund.
+  [PASS] Q 2: Can I get a full refund for a return?
+        answer: Customers can return any item within 60 days of delivery for a full refund.
+  [PASS] Q 3: Do I need the original packaging to return an item?
+        answer: Items must be returned in their original packaging with the receipt included.
+  [PASS] Q 4: How will my refund be paid?
+        answer: Refunds are paid back to the original payment method within 5 business days after we receive the item.
+  [PASS] Q 5: Can final sale items be returned?
+        answer: Items marked final sale cannot be returned or exchanged.
+  [PASS] Q 6: Is return shipping free for members?
+        answer: Return shipping is free for members, and guests pay a flat 6 dollar fee.
+  [PASS] Q 7: How long does standard shipping take?
+        answer: (no answer)
+  [PASS] Q 8: How fast is express shipping?
+        answer: (no answer)
+  [PASS] Q 9: Will my order ship today if I order before 2 pm?
+        answer: (no answer)
+  [PASS] Q10: Do you ship to Canada?
+        answer: (no answer)
+  [PASS] Q11: How do I track my order?
+        answer: (no answer)
+  [PASS] Q12: How long is the warranty on a product?
+        answer: Every product includes a 2 year warranty that covers defects in materials and workmanship.
+  [PASS] Q13: Does the warranty cover defects in materials?
+        answer: Every product includes a 2 year warranty that covers defects in materials and workmanship.
+  [PASS] Q14: Does the warranty cover water damage?
+        answer: The warranty does not cover damage from drops, water, or misuse.
+  [PASS] Q15: How do I make a warranty claim?
+        answer: To make a warranty claim, contact support with your order number and a photo of the defect.
+  [PASS] Q16: How long do approved warranty claims take?
+        answer: Approved warranty claims are repaired or replaced within 10 business days.
+  [PASS] Q17: Are batteries covered under warranty?
+        answer: Batteries are covered for the first 12 months of the warranty period.
+  [PASS] Q18: Do I need a photo to make a warranty claim?
+        answer: To make a warranty claim, contact support with your order number and a photo of the defect.
+  [PASS] Q19: Will my product be repaired or replaced under warranty?
+        answer: Approved warranty claims are repaired or replaced within 10 business days.
+  [PASS] Q20: Does the warranty cover misuse?
+        answer: The warranty does not cover damage from drops, water, or misuse.
+  Canary result: 20/20 passed.
+
+Done. The index noticed the document changed. That is the point.

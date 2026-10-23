@@ -1,0 +1,36 @@
+agent-tool-loop: one healthy task, one stuck task.
+Watch the budgets. They are the whole lesson.
+
+TASK: Plan a Denver trip budget and email it to Priya
+Budgets: max 12 steps, 2 retries per call, breaker trips at 3 identical calls in a row.
+[step 1/12] call search({'query': 'flights to Denver'})
+           -> ok: Cheapest flight to Denver: 320 dollars.
+[step 2/12] call search({'query': 'hotels in Denver'})
+           -> ok: Hotel in Denver: 140 dollars per night.
+[step 3/12] call directory({'name': 'Priya Nair'})
+           attempt 1 failed: directory is busy, try again
+           attempt 2 failed: directory is busy, try again
+           -> ok (attempt 3): Priya Nair: priya.nair@example.com
+[step 4/12] call calculator({'expression': '320 + 140 * 3'})
+           -> ok: 320 + 140 * 3 = 740
+[step 5/12] brain: done
+FINAL ANSWER: Trip budget ready. 320 + 140 * 3 = 740. Email the plan to Priya Nair.
+
+TASK: Check the current price of ACME stock
+Budgets: max 12 steps, 2 retries per call, breaker trips at 3 identical calls in a row.
+[step 1/12] call stock_price({'symbol': 'ACME'})
+           attempt 1 failed: price feed unreachable for ACME
+           attempt 2 failed: price feed unreachable for ACME
+           attempt 3 failed: price feed unreachable for ACME
+           -> gave up after 3 attempts (retry budget: 2)
+[step 2/12] call stock_price({'symbol': 'ACME'})
+           attempt 1 failed: price feed unreachable for ACME
+           attempt 2 failed: price feed unreachable for ACME
+           attempt 3 failed: price feed unreachable for ACME
+           -> gave up after 3 attempts (retry budget: 2)
+[step 3/12] call stock_price({'symbol': 'ACME'})
+           CIRCUIT BREAKER TRIPPED: this exact call was requested 3 times in a row.
+           The agent is stuck, not working. Stopping early instead of burning the remaining steps.
+FINAL ANSWER: Stopped by the circuit breaker at step 3 of 12. stock_price kept failing and the brain kept asking. A human should look at the tool, not at the agent.
+
+Done. Same loop, same tools. The budgets decided how each task ended.
