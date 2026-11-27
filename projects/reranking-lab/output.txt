@@ -1,0 +1,23 @@
+reranking-lab: the same question, two passes over 8 chunks.
+Question: How do I reset a user's API key?
+Corpus: 8 chunks. The model reads the top 5 after each pass.
+Reranker: REAL cross-encoder (cross-encoder/ms-marco-MiniLM-L-6-v2).
+
+PASS 1 — RETRIEVAL ONLY (TF-IDF cosine, question and chunk scored separately; scores shown 0-100)
+  1.  66.21  2. API keys overview (keyword-stuffed)
+  2.  59.25  6. Resetting things (keyword-stuffed)
+  3.  44.12  1. Reset a user's API key (the real answer)
+  4.  18.00  3. Create a new API key (near-miss)
+  5.   9.68  8. API authentication docs (near-miss)
+
+PASS 2 — AFTER RERANKING (real cross-encoder; raw logits, higher = more relevant)
+  1.  10.91  1. Reset a user's API key (the real answer)
+  2.   7.64  6. Resetting things (keyword-stuffed)
+  3.   5.98  2. API keys overview (keyword-stuffed)
+  4.   4.86  3. Create a new API key (near-miss)
+  5.  -0.90  8. API authentication docs (near-miss)
+
+The chunk with the reset steps (1. Reset a user's API key (the real answer)) moved from #3 after retrieval to #1 after reranking.
+The stuffed chunks stay near the top: they mention the right words, so the cross-encoder scores them too. Reranking decides which chunk the model reads first; it does not punish repetition by itself. Better chunking is the fix for stuffing, not a stronger reranker.
+
+Done. Same corpus, same question. The second pass is the difference.

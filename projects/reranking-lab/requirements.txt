@@ -1,0 +1,8 @@
+# The real cross-encoder path. Install with: pip install -r requirements.txt
+# On a CPU-only machine, install torch from the CPU index first to keep
+# the download small:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
+# Without sentence-transformers, main.py falls back to the labelled
+# stand-in pairwise scorer and says so in its output.
+sentence-transformers==6.3.0
